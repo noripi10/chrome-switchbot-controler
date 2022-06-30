@@ -1,25 +1,23 @@
-import React from "react";
-import logo from "@assets/img/logo.svg";
-import "@pages/popup/Popup.css";
+import '@pages/popup/Popup.css';
+import { Box, useColorModeValue } from '@chakra-ui/react';
+
+import { PopUpMain } from '@src/components/layout/PopUpMain';
+import { PopUpHeader } from '@src/components/layout/PopUpHeader';
 
 const Popup = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/pages/popup/Popup.jsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React!
-        </a>
-      </header>
-    </div>
+    <Box
+      display={'flex'}
+      flex={1}
+      flexDir='column'
+      bgColor={useColorModeValue('gray.100', 'gray.600')}
+      w='560px'
+      h='480px'
+      borderRadius='2'
+    >
+      <PopUpHeader />
+      <PopUpMain />
+    </Box>
   );
 };
 
