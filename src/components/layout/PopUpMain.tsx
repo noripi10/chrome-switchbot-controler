@@ -6,6 +6,8 @@ import { getStorageData, setStorageData } from '@libs/storage';
 
 import { SwitchBotList, TokenInputForm } from '@components/parts';
 
+let isFirst: boolean = true;
+
 const PopUpMain: FC = () => {
   const [hasToken, setHasToken] = useState<boolean | undefined>();
 
@@ -20,9 +22,16 @@ const PopUpMain: FC = () => {
   };
 
   useEffect(() => {
-    getStorageData(MY_SWITC_BOT_TOKEN).then((res) => {
-      setHasToken(!!res);
-    });
+    if (isFirst) {
+      isFirst = false;
+      getStorageData(MY_SWITC_BOT_TOKEN).then((res) => {
+        setHasToken(!!res);
+      });
+    }
+
+    return () => {
+      isFirst = true;
+    };
   }, []);
 
   if (hasToken) {
@@ -31,7 +40,7 @@ const PopUpMain: FC = () => {
 
   return (
     <>
-      <Stack flex={1} p={8}>
+      <Stack flex={1}>
         <TokenInputForm regsterToken={regsterToken} />
       </Stack>
     </>

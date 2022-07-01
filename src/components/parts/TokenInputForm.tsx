@@ -1,5 +1,9 @@
-import { Box, Button, Flex, Input, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Image, Input, Spacer, Text, VStack } from '@chakra-ui/react';
 import { ChangeEvent, FC, useState } from 'react';
+
+import Screen1 from '@assets/img/screen1.png';
+import Screen2 from '@assets/img/screen2.png';
+import { TokenInput } from './TokenInput';
 
 type Props = {
   regsterToken: (token: string) => void;
@@ -15,22 +19,16 @@ export const TokenInputForm: FC<Props> = ({ regsterToken }) => {
   };
 
   return (
-    <VStack flex={1} minW={'md'} align='flex-start'>
-      <Text fontSize={'md'}>SwitchBotトークンを入力してください</Text>
-      <Input type='password' onChange={onChangeText} value={token} background='white' />
-      <Flex alignItems={'flex-end'} justifyContent='flex-end' w='100%'>
-        <Button
-          onClick={onReg}
-          size='md'
-          bgColor='#E0393A'
-          _hover={{ bgColor: 'red.300' }}
-          color={'white'}
-          w='24'
-          disabled={!token}
-        >
-          登 録
-        </Button>
-      </Flex>
+    <VStack flex={1} minW={'md'} align='flex-start' p={4} py={2}>
+      <TokenInput onReg={onReg} onChangeText={onChangeText} token={token} />
+      <VStack pt={2} w='full'>
+        <Text>How to Get Token</Text>
+        <HStack align={'center'}>
+          <Image src={Screen1} w={140} h={280} _hover={{ transform: 'scale(2)' }} />
+          <Spacer px={4} />
+          <Image src={Screen2} w={140} h={280} _hover={{ transform: 'scale(2)' }} />
+        </HStack>
+      </VStack>
     </VStack>
   );
 };

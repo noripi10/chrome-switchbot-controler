@@ -11,7 +11,7 @@ const Popup = () => {
       flexDir='column'
       bgColor={useColorModeValue('gray.100', 'gray.600')}
       w='560px'
-      h='480px'
+      h='560px'
       borderRadius='2'
     >
       <PopUpHeader />
