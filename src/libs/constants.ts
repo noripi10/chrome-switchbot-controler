@@ -1,5 +1,5 @@
-export const MY_SWITC_BOT_DEVICES = 'my-swich-bot-devices';
-export const MY_SWITC_BOT_TOKEN = 'my-swich-bot-secret-token';
+export const MY_SWITC_BOT_DEVICES = 'MY_SWITC_BOT_DEVICES';
+export const MY_SWITC_BOT_TOKEN = 'MY_SWITC_BOT_TOKEN';
 
 export const GET_DEVICES = 'GET_DEVICES';
 export const DEVICE_POWER_ON = 'DEVICE_POWER_ON';

@@ -1,14 +1,19 @@
+import { startTransition, useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
   Center,
+  Flex,
   Heading,
   HStack,
   IconButton,
+  keyframes,
   Spacer,
   Stack,
   Text,
   Tooltip,
+  useColorModeValue,
+  usePrefersReducedMotion,
   VStack,
 } from '@chakra-ui/react';
 import { AiOutlineReload } from 'react-icons/ai';
@@ -16,10 +21,9 @@ import { BiDevices } from 'react-icons/bi';
 
 import { getStorageData, setStorageData } from '@src/libs/storage';
 import { AllDevices, Device, GetDeviceResult, RemoteDevice } from '@src/pages/background/fetcher';
-import { startTransition, useEffect, useState } from 'react';
-import { DEVICE_POWER_ON, GET_DEVICES, MY_SWITC_BOT_DEVICES, MY_SWITC_BOT_TOKEN } from '../constants';
+import { DEVICE_POWER_ON, GET_DEVICES, MY_SWITC_BOT_DEVICES, MY_SWITC_BOT_TOKEN } from '../../libs/constants';
 
-export const SwithcBotList = () => {
+const SwithcBotList = () => {
   const [devices, setDevices] = useState<AllDevices | undefined>();
 
   const init = async () => {
@@ -52,43 +56,77 @@ export const SwithcBotList = () => {
     <>
       <Box display={'flex'} flexDir='column' justifyContent={'flex-start'} px='8' py='4' overflowY={'scroll'}>
         <Heading as='h3' fontSize={'sm'}>
-          デバイス
+          Device
         </Heading>
         <Box display={'flex'} flexWrap={'wrap'}>
           {devices?.deviceList?.map((device) => (
             <DeviceItem key={device.deviceId} device={device} />
           ))}
         </Box>
-        <Spacer py={4} />
+        <Spacer py={3} />
         <Heading as='h3' fontSize={'sm'}>
-          リモートデバイス
+          Remote Device
         </Heading>
         <Box display={'flex'} flexWrap={'wrap'}>
           {devices?.infraredRemoteList?.map((device) => (
-            <RemoteDeviceItem key={device.deviceId} device={device} />
+            <DeviceItem key={device.deviceId} device={device} />
           ))}
         </Box>
       </Box>
       <Center position={'absolute'} right={8} bottom={8}>
-        <Tooltip label='再取得'>
-          <IconButton
-            aria-label='再取得'
-            bgColor={'#E0393A'}
-            width='12'
-            height='12'
-            borderRadius={'full'}
-            icon={<AiOutlineReload size={'24'} color='#fff' />}
-            _hover={{ bgColor: 'red.300' }}
-            onClick={getCurrentDevices}
-          />
-        </Tooltip>
+        <ReloadButton reload={getCurrentDevices} />
       </Center>
     </>
   );
 };
 
-const DeviceItem = ({ device }: { device: Device }) => {
+const lotation = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
+
+const ReloadButton = ({ reload }: { reload: () => Promise<void> }) => {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [loading, setLoading] = useState(false);
+
+  const animation = prefersReducedMotion ? undefined : `${lotation} 1s linear`;
+  console.log({ animation });
+  const click = () => {
+    console.log('start');
+    setLoading(true);
+
+    startTransition(() => {
+      reload().then(() =>
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000)
+      );
+      console.log('end');
+    });
+  };
+  return (
+    <Tooltip label='Reload Device'>
+      <Box animation={loading ? animation : ''}>
+        <IconButton
+          aria-label='Reload Device'
+          bgColor={'#E0393A'}
+          width='12'
+          height='12'
+          borderRadius={'full'}
+          icon={<AiOutlineReload size={'24'} color='#fff' />}
+          _hover={{ bgColor: 'red.300' }}
+          onClick={click}
+        />
+      </Box>
+    </Tooltip>
+  );
+};
+
+const DeviceItem = ({ device }: { device: Device | RemoteDevice }) => {
   const [status, setStatus] = useState('');
+  const statusColor = useMemo(() => {
+    return /success/.test(status) || status === '' ? 'blue.400' : 'red.400';
+  }, [status]);
 
   const onOn = async () => {
     const token = await getStorageData(MY_SWITC_BOT_TOKEN);
@@ -123,90 +161,30 @@ const DeviceItem = ({ device }: { device: Device }) => {
   };
 
   return (
-    <Stack p={4} borderColor='gray.400' borderRadius='md' borderWidth={1} w='56' h='32' m={1}>
+    <Stack p={4} m={1} mr={2} borderColor='gray.400' borderRadius='md' borderWidth={1} w='56' h='32'>
       <HStack flex={1}>
-        <Center p={4} flex={1} bgColor='gray.200' borderRadius={8}>
+        <Center p={4} flex={1} bgColor={useColorModeValue('gray.200', 'gray.700')} borderRadius={8}>
           <BiDevices size={32} />
         </Center>
 
         <VStack flex={2}>
           <Text fontWeight={'bold'}>{device.deviceName}</Text>
-          <Text>{device.deviceType}</Text>
+          <Text>{'deviceType' in device ? device.deviceType : device.remoteType}</Text>
           <HStack flex={1} justify='center' align='center'>
-            <Button size='xs' bgColor='gray.400' onClick={onOn}>
+            <Button size='xs' bgColor='red.400' onClick={onOn} w='10' _hover={{ bgColor: 'red.300' }}>
               ON
             </Button>
-            <Button size='xs' bgColor='gray.400' onClick={onOff}>
+            <Button size='xs' bgColor='blue.400' onClick={onOff} w='10' _hover={{ bgColor: 'blue.300' }}>
               OFF
             </Button>
           </HStack>
-          <Box h={4}>
-            <Text>{status ?? ''}</Text>
-          </Box>
         </VStack>
       </HStack>
+      <Flex h={1} alignItems='center' justifyContent='center' py={1}>
+        <Text color={statusColor}>{status ?? ''}</Text>
+      </Flex>
     </Stack>
   );
 };
 
-const RemoteDeviceItem = ({ device }: { device: RemoteDevice }) => {
-  const [status, setStatus] = useState('');
-
-  const onOn = async () => {
-    const token = await getStorageData(MY_SWITC_BOT_TOKEN);
-    chrome.runtime.sendMessage(
-      { type: DEVICE_POWER_ON, deviceId: device.deviceId, token, command: 'turnOn' },
-      (response) => {
-        console.log({ response });
-        if (response) {
-          setStatus(response.message);
-          startTransition(() => {
-            setTimeout(() => setStatus(''), 1500);
-          });
-        }
-      }
-    );
-  };
-
-  const onOff = async () => {
-    const token = await getStorageData(MY_SWITC_BOT_TOKEN);
-    chrome.runtime.sendMessage(
-      { type: DEVICE_POWER_ON, deviceId: device.deviceId, token, command: 'turnOff' },
-      (response) => {
-        console.log({ response });
-        if (response) {
-          setStatus(response.message);
-          startTransition(() => {
-            setTimeout(() => setStatus(''), 1500);
-          });
-        }
-      }
-    );
-  };
-
-  return (
-    <Stack p={4} borderColor='gray.400' borderRadius='md' borderWidth={1} w='56' h='32' m={1}>
-      <HStack flex={1}>
-        <Center p={4} flex={1} bgColor='gray.200' borderRadius={8}>
-          <BiDevices size={32} />
-        </Center>
-
-        <VStack flex={2}>
-          <Text fontWeight={'bold'}>{device.deviceName}</Text>
-          <Text>{device.remoteType}</Text>
-          <HStack flex={1} justify='center' align='center'>
-            <Button size='xs' bgColor='gray.400' onClick={onOn}>
-              ON
-            </Button>
-            <Button size='xs' bgColor='gray.400' onClick={onOff}>
-              OFF
-            </Button>
-          </HStack>
-          <Box h={4}>
-            <Text>{status ?? ''}</Text>
-          </Box>
-        </VStack>
-      </HStack>
-    </Stack>
-  );
-};
+export default SwithcBotList;

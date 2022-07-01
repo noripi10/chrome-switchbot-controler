@@ -5,7 +5,7 @@ export const getStorageData = async <T>(key: string) => {
   return item[key] as T;
 };
 
-export const setStorageData = async (key: string, value: any) => {
+export const setStorageData = async (key: string, value: unknown) => {
   await chrome.storage.local.set({ [key]: value });
   return true;
 };

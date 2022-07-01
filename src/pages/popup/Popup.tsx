@@ -1,8 +1,7 @@
 import '@pages/popup/Popup.css';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 
-import { PopUpMain } from '@src/components/layout/PopUpMain';
-import { PopUpHeader } from '@src/components/layout/PopUpHeader';
+import { PopUpMain, PopUpHeader } from '@src/components/layout';
 
 const Popup = () => {
   return (

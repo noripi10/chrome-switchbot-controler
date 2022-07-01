@@ -1,13 +1,12 @@
 import { FC, useEffect, useState } from 'react';
 import { Stack } from '@chakra-ui/react';
 
-import { TokenInput } from '../../components/TokenInput';
+import { MY_SWITC_BOT_TOKEN } from '@libs/constants';
+import { getStorageData, setStorageData } from '@libs/storage';
 
-import { MY_SWITC_BOT_TOKEN } from '../../constants';
-import { getStorageData, setStorageData } from '../../libs/storage';
-import { SwithcBotList } from '../SwitchBotList';
+import { SwitchBotList, TokenInputForm } from '@components/parts';
 
-export const PopUpMain: FC = () => {
+const PopUpMain: FC = () => {
   const [hasToken, setHasToken] = useState<boolean | undefined>();
 
   const regsterToken = (token: string) => {
@@ -27,14 +26,16 @@ export const PopUpMain: FC = () => {
   }, []);
 
   if (hasToken) {
-    return <SwithcBotList />;
+    return <SwitchBotList />;
   }
 
   return (
     <>
       <Stack flex={1} p={8}>
-        <TokenInput regsterToken={regsterToken} />
+        <TokenInputForm regsterToken={regsterToken} />
       </Stack>
     </>
   );
 };
+
+export default PopUpMain;

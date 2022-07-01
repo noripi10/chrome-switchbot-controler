@@ -5,7 +5,7 @@ type Props = {
   regsterToken: (token: string) => void;
 };
 
-export const TokenInput: FC<Props> = ({ regsterToken }) => {
+export const TokenInputForm: FC<Props> = ({ regsterToken }) => {
   const [token, setToken] = useState('');
 
   const onChangeText = (e: ChangeEvent<HTMLInputElement>) => setToken(e.target.value);
@@ -34,3 +34,5 @@ export const TokenInput: FC<Props> = ({ regsterToken }) => {
     </VStack>
   );
 };
+
+export default TokenInputForm;
