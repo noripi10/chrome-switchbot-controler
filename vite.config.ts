@@ -30,6 +30,7 @@ export default defineConfig({
     sourcemap: process.env.__DEV__ === 'true',
     rollupOptions: {
       input: {
+        content: resolve(pagesDir, 'content', 'index.ts'),
         background: resolve(pagesDir, 'background', 'index.ts'),
         popup: resolve(pagesDir, 'popup', 'index.html'),
       },

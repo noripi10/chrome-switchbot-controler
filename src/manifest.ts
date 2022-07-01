@@ -14,6 +14,13 @@ const manifest: ManifestType = {
   icons: {
     '128': 'icon-128.png',
   },
+  content_scripts: [
+    {
+      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+      js: ['src/pages/content/index.js'],
+      css: ['contentStyle.css'],
+    },
+  ],
   web_accessible_resources: [
     {
       resources: ['assets/jsx-runtime.*.js', 'contentStyle.css', 'icon-128.png', 'icon-34.png'],
