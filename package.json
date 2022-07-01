@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "chrome extension switchbot controler",
   "license": "MIT",
+  "author": "noripi10 <sgym.snk@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/noripi10/chrome-switchbot-control.git"
