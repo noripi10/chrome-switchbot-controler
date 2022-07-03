@@ -1,4 +1,14 @@
-import { Button, Flex, IconButton, Input, InputGroup, InputRightElement, Text, VStack } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Text,
+  useColorModeValue,
+  VStack,
+} from '@chakra-ui/react';
 import { ChangeEvent, FC, useState } from 'react';
 import { BiShow, BiHide } from 'react-icons/bi';
 
@@ -31,7 +41,7 @@ export const TokenInput: FC<Props> = ({ onReg, onChangeText, token }) => {
             h='1.75rem'
             size='sm'
             onClick={handleClick}
-            bgColor='gray.400'
+            bgColor={useColorModeValue('gray.100', 'gray.400')}
             color='#000'
             borderRadius={'full'}
             icon={show ? <BiHide /> : <BiShow />}
@@ -42,13 +52,14 @@ export const TokenInput: FC<Props> = ({ onReg, onChangeText, token }) => {
 
       <Flex alignItems={'flex-end'} justifyContent='flex-end' w='100%'>
         <Button
+          disabled={!token}
           onClick={onReg}
           size='md'
-          bgColor='#E0393A'
-          _hover={{ bgColor: 'red.300' }}
           color={'white'}
+          bgColor='#E0393A'
+          borderRadius={10}
           w='24'
-          disabled={!token}
+          _hover={{ bgColor: 'red.300' }}
         >
           Register
         </Button>

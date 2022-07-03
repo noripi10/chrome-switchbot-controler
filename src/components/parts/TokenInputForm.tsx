@@ -19,14 +19,28 @@ export const TokenInputForm: FC<Props> = ({ regsterToken }) => {
   };
 
   return (
-    <VStack flex={1} minW={'md'} align='flex-start' p={4} py={2}>
+    <VStack flex={1} w={'lg'} p={4} py={2}>
       <TokenInput onReg={onReg} onChangeText={onChangeText} token={token} />
-      <VStack pt={2} w='full'>
-        <Text>How to Get Token</Text>
+      <VStack pt={2} w={'full'}>
+        <Flex align={'flex-start'}>
+          <Text textAlign={'left'}>How to Get Token</Text>
+        </Flex>
         <HStack align={'center'}>
-          <Image src={Screen1} w={140} h={280} _hover={{ transform: 'scale(2)' }} />
+          <Image
+            src={Screen1}
+            w={140}
+            h={280}
+            _hover={{ transform: 'scale(1.9) translate(0, -46px)', zIndex: 100 }}
+            zIndex={10}
+          />
           <Spacer px={4} />
-          <Image src={Screen2} w={140} h={280} _hover={{ transform: 'scale(2)' }} />
+          <Image
+            src={Screen2}
+            w={140}
+            h={280}
+            _hover={{ transform: 'scale(1.9) translate(0, -46px)', zIndex: 100 }}
+            zIndex={10}
+          />
         </HStack>
       </VStack>
     </VStack>

@@ -39,11 +39,9 @@ const PopUpMain: FC = () => {
   }
 
   return (
-    <>
-      <Stack flex={1}>
-        <TokenInputForm regsterToken={regsterToken} />
-      </Stack>
-    </>
+    <Stack flex={1} align='center'>
+      <TokenInputForm regsterToken={regsterToken} />
+    </Stack>
   );
 };
 
