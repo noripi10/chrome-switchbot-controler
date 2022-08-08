@@ -20,6 +20,13 @@ export const DeviceItem = ({
     return /success/.test(status) || status === '' ? 'green.400' : 'red.400';
   }, [status]);
 
+  // TODO Hub Miniだとステータスがうまく取得できない(body無しでstatus:100が返却される)
+  const iconStatusColor = useMemo(
+    () =>
+      'deviceType' in device && device.deviceType == 'Hub Mini' ? '#ababab' : device.online ? '#4ba01d' : '#c03a3a',
+    [device.online]
+  );
+
   const onPowerToggle = async (type: typeof DEVICE_POWER_ON | typeof DEVICE_POWER_OFF) => {
     const token = await getStorageData(MY_SWITC_BOT_TOKEN);
 
@@ -54,11 +61,11 @@ export const DeviceItem = ({
         >
           <Box pb={'2'}>
             {/* TODO アイコンをTypeで変える */}
-            <BiDevices size={32} color={device.online ? '#4ba01d' : '#c03a3a'} />
+            <BiDevices size={32} color={iconStatusColor} />
           </Box>
 
           <Box position={'absolute'} bottom={1}>
-            <Text color={device.online ? '#4ba01d' : '#c03a3a'}>{device.online ? 'online' : 'offline'}</Text>
+            <Text color={iconStatusColor}>{device.online ? 'online' : 'offline'}</Text>
           </Box>
         </Center>
 
