@@ -4,11 +4,18 @@ export type GetDeviceResult = {
   message: string;
 };
 
+export type GetDeviceStatusResult = {
+  statusCode: number;
+  body: any;
+  message: string;
+};
+
 export type Device = {
   deviceId: string;
   deviceName: string;
   deviceType: string;
   hubDeviceId: string;
+  online?: boolean;
 };
 
 export type RemoteDevice = {
@@ -16,6 +23,7 @@ export type RemoteDevice = {
   deviceName: string;
   remoteType: string;
   hubDeviceId: string;
+  online?: boolean;
 };
 
 export type AllDevices = {
@@ -41,6 +49,21 @@ export type PostProps = {
   command: string;
 };
 
+export const getDeviceOnlineStatus = async (deviceId: string, token: string) => {
+  const result = await fetch(`https://api.switch-bot.com/v1.0/devices/${deviceId}/status`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token,
+    },
+  });
+
+  const { statusCode, message } = (await result.json()) as GetDeviceStatusResult;
+  console.info('status result', statusCode, message);
+
+  return statusCode === 100 && !!message.match(/success/);
+};
+
 export const getDeviceList = async (param: GetProps) => {
   console.log({ param });
   const result = await fetch('https://api.switch-bot.com/v1.0/devices', {
@@ -50,16 +73,37 @@ export const getDeviceList = async (param: GetProps) => {
     },
   });
   const data = (await result.json()) as GetDeviceResult;
-  console.log({ data });
+
+  if (data.body.deviceList) {
+    const deviceList = await Promise.all(
+      data.body.deviceList.map(
+        async (device) =>
+          await getDeviceOnlineStatus(device.deviceId, param.token).then((res) => {
+            return { ...device, online: res };
+          })
+      )
+    );
+
+    let infraredRemoteList = data.body.infraredRemoteList;
+    if (deviceList && data.body.infraredRemoteList) {
+      infraredRemoteList = infraredRemoteList?.map((remoteDevice) => {
+        const res = deviceList.find((e) => e.deviceId === remoteDevice.hubDeviceId)?.online;
+        return { ...remoteDevice, online: res };
+      });
+    }
+
+    console.info('a');
+    return { ...data, body: { deviceList, infraredRemoteList } } as GetDeviceResult;
+  }
+  console.info('b');
   return data;
 };
 
 export const postPowerToggle = async (param: PostProps) => {
-  console.log({ param });
   const result = await fetch(`https://api.switch-bot.com/v1.0/devices/${param.deviceId}/commands`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json; charset=utf8',
       Authorization: param.token,
     },
     body: JSON.stringify({
@@ -70,6 +114,5 @@ export const postPowerToggle = async (param: PostProps) => {
   });
 
   const data = (await result.json()) as PostDeviceCommandResult;
-  console.log({ data });
   return data;
 };

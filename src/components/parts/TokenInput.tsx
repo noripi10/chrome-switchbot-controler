@@ -1,3 +1,5 @@
+import { ChangeEvent, FC, useState } from 'react';
+
 import {
   Button,
   Flex,
@@ -9,7 +11,7 @@ import {
   useColorModeValue,
   VStack,
 } from '@chakra-ui/react';
-import { ChangeEvent, FC, useState } from 'react';
+
 import { BiShow, BiHide } from 'react-icons/bi';
 
 type Props = {
@@ -32,9 +34,10 @@ export const TokenInput: FC<Props> = ({ onReg, onChangeText, token }) => {
           background='white'
           pr='4.5rem'
           type={show ? 'text' : 'password'}
-          placeholder='Enter password'
+          placeholder='Enter SwitchBot Token'
           onChange={onChangeText}
           value={token}
+          _placeholder={{ color: '#9b9b9b' }}
         />
         <InputRightElement width='4.5rem'>
           <IconButton

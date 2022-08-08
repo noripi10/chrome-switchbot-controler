@@ -1,10 +1,10 @@
 import { FC, useEffect, useState } from 'react';
+
 import { Stack } from '@chakra-ui/react';
 
+import { SwitchBotList, TokenInputForm } from '@components/parts';
 import { MY_SWITC_BOT_TOKEN } from '@libs/constants';
 import { getStorageData, setStorageData } from '@libs/storage';
-
-import { SwitchBotList, TokenInputForm } from '@components/parts';
 
 let isFirst: boolean = true;
 

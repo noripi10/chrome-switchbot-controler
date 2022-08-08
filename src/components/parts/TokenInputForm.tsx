@@ -1,9 +1,9 @@
-import { Box, Button, Flex, HStack, Image, Input, Spacer, Text, VStack } from '@chakra-ui/react';
+import { Flex, HStack, Image, Spacer, Text, VStack } from '@chakra-ui/react';
 import { ChangeEvent, FC, useState } from 'react';
 
 import Screen1 from '@assets/img/screen1.png';
 import Screen2 from '@assets/img/screen2.png';
-import { TokenInput } from './TokenInput';
+import { TokenInput } from '@src/components/parts/TokenInput';
 
 type Props = {
   regsterToken: (token: string) => void;
