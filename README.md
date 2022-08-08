@@ -8,7 +8,7 @@ This Chrome extension SwitchBot can be used to control the terminal (power on or
 
 ## Getting started
 
-1. Install [the extension on the Chrome Web Store]
+1. Install [the extension on the Chrome Web Store](https://chrome.google.com/webstore/detail/my-switchbot-controler/ajhnghbfoleadocfplnfkfnkcbcamehl)
 2. Click the popup icon
 3. Copy and paste the token you have just obtained, then press the Register button.
 4. When the token is set correctly, the terminal under your control will be displayed, allowing you to turn it on or off.
@@ -18,6 +18,7 @@ This Chrome extension SwitchBot can be used to control the terminal (power on or
 
 ```
 yarn
+yarn build
 yarn dev
 ```
 
@@ -26,3 +27,7 @@ Then `dist` directory will be created on the project root. Please load it on `ch
 ## License
 
 This repository is under [MIT license](https://opensource.org/licenses/MIT).
+
+## Aritcle
+
+[Zenn - SwitchBot 用の Chrome 拡張機能を作りました](https://zenn.dev/noripi10/articles/0e14d8dbea85cd)
