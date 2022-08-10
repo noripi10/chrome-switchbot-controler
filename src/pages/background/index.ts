@@ -3,7 +3,7 @@ import { getDeviceList, postPowerToggle } from './fetcher';
 const init = () => {
   chrome.runtime.onMessage.addListener((message, sender, callback) => {
     try {
-      console.log({ message });
+      // console.log({ message });
       if (message.type === 'GET_DEVICES') {
         getDeviceList(message).then(callback, callback);
         return true;

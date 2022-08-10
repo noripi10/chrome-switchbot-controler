@@ -15,7 +15,10 @@ export type Device = {
   deviceName: string;
   deviceType: string;
   hubDeviceId: string;
+  deviceMark: string;
   online?: boolean;
+  status?: string;
+  statusColor?: string;
 };
 
 export type RemoteDevice = {
@@ -23,7 +26,10 @@ export type RemoteDevice = {
   deviceName: string;
   remoteType: string;
   hubDeviceId: string;
+  hubDeviceMark?: string;
   online?: boolean;
+  status?: string;
+  statusColor?: string;
 };
 
 export type AllDevices = {
@@ -49,6 +55,8 @@ export type PostProps = {
   command: string;
 };
 
+const DEVICE_MARKS = ['★', '●', '▲', '■', '◆', '◎', '⌘', '♪', '∮', '☆'];
+
 export const getDeviceOnlineStatus = async (deviceId: string, token: string) => {
   const result = await fetch(`https://api.switch-bot.com/v1.0/devices/${deviceId}/status`, {
     method: 'GET',
@@ -65,7 +73,7 @@ export const getDeviceOnlineStatus = async (deviceId: string, token: string) => 
 };
 
 export const getDeviceList = async (param: GetProps) => {
-  console.log({ param });
+  // console.log({ param });
   const result = await fetch('https://api.switch-bot.com/v1.0/devices', {
     headers: {
       'Content-Type': 'application/json',
@@ -74,12 +82,17 @@ export const getDeviceList = async (param: GetProps) => {
   });
   const data = (await result.json()) as GetDeviceResult;
 
+  // Hub MiniのデバイスステータスはAPIで取得できない
+  // https://github.com/OpenWonderLabs/SwitchBotAPI#description
   if (data.body.deviceList) {
     const deviceList = await Promise.all(
       data.body.deviceList.map(
-        async (device) =>
+        async (device, index) =>
           await getDeviceOnlineStatus(device.deviceId, param.token).then((res) => {
-            return { ...device, online: res };
+            const online = res;
+            const status = device.deviceType === 'Hub Mini' ? '---' : res ? 'online' : 'offline';
+            const statusColor = device.deviceType === 'Hub Mini' ? '#ababab' : res ? '#4ba01d' : '#c03a3a';
+            return { ...device, deviceMark: DEVICE_MARKS[index], online, status, statusColor };
           })
       )
     );
@@ -87,19 +100,21 @@ export const getDeviceList = async (param: GetProps) => {
     let infraredRemoteList = data.body.infraredRemoteList;
     if (deviceList && data.body.infraredRemoteList) {
       infraredRemoteList = infraredRemoteList?.map((remoteDevice) => {
-        const res = deviceList.find((e) => e.deviceId === remoteDevice.hubDeviceId)?.online;
-        return { ...remoteDevice, online: res };
+        const res = deviceList.find((e) => e.deviceId === remoteDevice.hubDeviceId);
+        const online = res?.deviceType === 'Hub Mini' ? false : res?.online;
+        const status = '---';
+        const statusColor = '#ababab';
+        return { ...remoteDevice, hubDeviceMark: res?.deviceMark, online, status, statusColor };
       });
     }
 
-    console.info('a');
     return { ...data, body: { deviceList, infraredRemoteList } } as GetDeviceResult;
   }
-  console.info('b');
   return data;
 };
 
 export const postPowerToggle = async (param: PostProps) => {
+  // console.log({ param });
   const result = await fetch(`https://api.switch-bot.com/v1.0/devices/${param.deviceId}/commands`, {
     method: 'POST',
     headers: {
