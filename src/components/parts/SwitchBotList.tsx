@@ -1,4 +1,4 @@
-import { startTransition, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { Box, Center, Heading, Spacer, Spinner, useDisclosure, useToast } from '@chakra-ui/react';
 
@@ -12,7 +12,7 @@ import { EditButton } from '@src/components/parts/EditBotton';
 import { ReloadButton } from '@src/components/parts/ReloadButton';
 import { DEVICE_INFO_LAST_GET_TIME, GET_DEVICES, MY_SWITC_BOT_DEVICES, MY_SWITC_BOT_TOKEN } from '@src/libs/constants';
 
-let isFirst: boolean = true;
+let isFirst = true;
 
 const SwithcBotList = () => {
   const [loading, setLoading] = useState(true);
@@ -25,7 +25,9 @@ const SwithcBotList = () => {
     let lastUpdateTime = new Date().toISOString();
     try {
       lastUpdateTime = (await getStorageData<string>(DEVICE_INFO_LAST_GET_TIME)) ?? lastUpdateTime;
-    } catch {}
+    } catch (error) {
+      console.error(error);
+    }
     const diff = getDiffMinutesNow(lastUpdateTime);
 
     // 1分経過後に再度POPUPを開いたら再取得
@@ -78,10 +80,10 @@ const SwithcBotList = () => {
     // 100: online, 161,171: offline
     if (![100, 161, 171].some((e) => e === status)) return;
 
-    let result = devices;
+    const result = devices;
 
     if (deviceType === 'device') {
-      let newDeviceList = devices.deviceList?.map((device) => {
+      const newDeviceList = devices.deviceList?.map((device) => {
         if (device.deviceId === deviceId) {
           device.online = status === 100 ? true : 161 === status ? false : device.online;
           device.status = device.online ? 'online' : 'offline';
@@ -94,7 +96,7 @@ const SwithcBotList = () => {
     }
 
     if (deviceType === 'remoteDevice') {
-      let newInfraredRemoteList = devices.infraredRemoteList?.map((device) => {
+      const newInfraredRemoteList = devices.infraredRemoteList?.map((device) => {
         if (device.deviceId === deviceId) {
           device.online = status === 100 ? true : 171 === status ? false : device.online;
           device.status = device.online ? 'online' : 'offline';

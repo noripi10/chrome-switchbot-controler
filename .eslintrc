@@ -25,5 +25,10 @@
   "globals": {
     "chrome": "readonly"
   },
-  "ignorePatterns": ["watch.js", "dist/**"]
+  "ignorePatterns": ["watch.js", "dist/**"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
 }

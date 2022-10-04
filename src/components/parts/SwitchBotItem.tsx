@@ -4,7 +4,7 @@ import { Box, Button, Center, Flex, HStack, Stack, Text, useColorModeValue, VSta
 
 import { BiDevices } from 'react-icons/bi';
 
-import { DEVICE_POWER_OFF, DEVICE_POWER_ON, DEVICE_TYPE_HUB_MINI, MY_SWITC_BOT_TOKEN } from '@src/libs/constants';
+import { DEVICE_POWER_OFF, DEVICE_POWER_ON, MY_SWITC_BOT_TOKEN } from '@src/libs/constants';
 import { getStorageData } from '@src/libs/storage';
 import { Device, RemoteDevice } from '@src/pages/background/fetcher';
 
@@ -16,7 +16,7 @@ export const DeviceItem = ({
   setDeviceStatus: (deviceType: 'device' | 'remoteDevice', deviceId: string, status: number) => void;
 }) => {
   const isDevice = 'deviceType' in device;
-  const isRemoteDevice = !('deviceType' in device);
+  // const isRemoteDevice = !('deviceType' in device);
   const mark = isDevice ? device.deviceMark : device.hubDeviceMark;
 
   const [commandStatus, setCommandStatus] = useState('');

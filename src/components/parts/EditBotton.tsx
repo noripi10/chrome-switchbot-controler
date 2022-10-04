@@ -22,3 +22,5 @@ export const EditButton = memo(({ modalOpen }: { modalOpen: () => void }) => {
     </Tooltip>
   );
 });
+
+EditButton.displayName = 'EditButton';

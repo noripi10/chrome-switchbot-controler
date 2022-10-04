@@ -9,14 +9,17 @@
     "url": "https://github.com/noripi10/chrome-switchbot-control.git"
   },
   "scripts": {
+    "dev": "nodemon",
     "build": "tsc --noEmit && vite build",
-    "dev": "nodemon"
+    "archive": "node archiver.js",
+    "lint": "eslint --fix ./src/**/*{.ts,.tsx}"
   },
   "type": "module",
   "dependencies": {
     "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
+    "archiver": "^5.3.1",
     "date-fns": "^2.29.1",
     "framer-motion": "^6.3.16",
     "react": "^18.2.0",
@@ -36,7 +39,7 @@
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.23.0",
+    "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-react-hooks": "^4.3.0",
     "fs-extra": "^10.0.0",
     "nodemon": "^2.0.15",
