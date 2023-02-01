@@ -65,7 +65,7 @@ export const getDeviceOnlineStatus = async (deviceId: string, token: string) => 
 };
 
 export const getDeviceList = async (param: GetProps) => {
-  console.log({ param });
+  // console.log({ param });
   const result = await fetch('https://api.switch-bot.com/v1.0/devices', {
     headers: {
       'Content-Type': 'application/json',

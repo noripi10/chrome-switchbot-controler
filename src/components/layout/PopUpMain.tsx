@@ -6,6 +6,7 @@ import { SwitchBotList, TokenInputForm } from '@components/parts';
 import { MY_SWITC_BOT_TOKEN } from '@libs/constants';
 import { getStorageData, setStorageData } from '@libs/storage';
 
+// eslint-disable-next-line @typescript-eslint/no-inferrable-types
 let isFirst: boolean = true;
 
 const PopUpMain: FC = () => {

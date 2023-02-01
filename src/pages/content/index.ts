@@ -1,5 +1,5 @@
 try {
-  console.log("content loaded");
+  // console.log('content loaded');
   injectContentViewScript();
 } catch (e) {
   console.error(e);
@@ -20,19 +20,12 @@ function injectContentViewScript() {
 }
 
 function createContentViewScript(): HTMLScriptElement {
-  const script = document.createElement("script");
-  script.setAttribute("type", "module");
-  script.setAttribute(
-    "src",
-    chrome.runtime.getURL("src/pages/contentView/index.js")
-  );
+  const script = document.createElement('script');
+  script.setAttribute('type', 'module');
+  script.setAttribute('src', chrome.runtime.getURL('src/pages/contentView/index.js'));
   return script;
 }
 
 function getTargetElement(): HTMLElement {
-  return (
-    document.head ||
-    document.getElementsByTagName("head")[0] ||
-    document.documentElement
-  );
+  return document.head || document.getElementsByTagName('head')[0] || document.documentElement;
 }

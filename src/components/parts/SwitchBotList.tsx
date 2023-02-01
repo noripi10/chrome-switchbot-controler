@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Box, Center, Heading, Spacer, useDisclosure, useToast } from '@chakra-ui/react';
 
 import { getStorageData, setStorageData } from '@src/libs/storage';
@@ -11,9 +11,9 @@ import { EditButton } from '@src/components/parts/EditBotton';
 import { ReloadButton } from '@src/components/parts/ReloadButton';
 import { DEVICE_INFO_LAST_GET_TIME, GET_DEVICES, MY_SWITC_BOT_DEVICES, MY_SWITC_BOT_TOKEN } from '@src/libs/constants';
 
-let isFirst: boolean = true;
+let isFirst = true;
 
-const SwithcBotList = () => {
+const SwithcBotList: FC = () => {
   const [devices, setDevices] = useState<AllDevices | undefined>();
   const toast = useToast();
 
@@ -23,12 +23,14 @@ const SwithcBotList = () => {
     let lastUpdateTime = new Date().toISOString();
     try {
       lastUpdateTime = (await getStorageData<string>(DEVICE_INFO_LAST_GET_TIME)) ?? lastUpdateTime;
-    } catch {}
+    } catch (error) {
+      console.info('get fail lastUpdateTime');
+    }
     const diff = getDiffMinutesNow(lastUpdateTime);
 
     if (diff >= -3) {
       const saveDevices = await getStorageData<AllDevices>(MY_SWITC_BOT_DEVICES);
-      console.log({ devices });
+      // console.log({ devices });
       if (saveDevices) {
         setDevices(saveDevices);
         return;
@@ -42,7 +44,7 @@ const SwithcBotList = () => {
   const getCurrentDevices = async () => {
     const token = await getStorageData<string>(MY_SWITC_BOT_TOKEN);
     chrome.runtime.sendMessage({ type: GET_DEVICES, token }, (response: GetDeviceResult | undefined) => {
-      console.log({ response });
+      // console.log({ response });
       if (response?.message === 'success') {
         setStorageData(MY_SWITC_BOT_DEVICES, response.body);
         setDevices(response.body);
@@ -65,10 +67,10 @@ const SwithcBotList = () => {
     if (!devices) return;
     if (![100, 161, 171].some((e) => e === status)) return;
 
-    let result = devices;
+    const result = devices;
 
     if (deviceType === 'device') {
-      let newDeviceList = devices.deviceList?.map((device) => {
+      const newDeviceList = devices.deviceList?.map((device) => {
         if (device.deviceId === deviceId) {
           device.online = status === 100 ? true : 161 === status ? false : device.online;
         }
@@ -79,7 +81,7 @@ const SwithcBotList = () => {
     }
 
     if (deviceType === 'remoteDevice') {
-      let newInfraredRemoteList = devices.infraredRemoteList?.map((device) => {
+      const newInfraredRemoteList = devices.infraredRemoteList?.map((device) => {
         if (device.deviceId === deviceId) {
           device.online = status === 100 ? true : 171 === status ? false : device.online;
         }
