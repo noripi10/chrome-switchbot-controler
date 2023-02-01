@@ -1,5 +1,6 @@
-import { FC, useEffect, useState } from 'react';
-import { Box, Center, Heading, Spacer, useDisclosure, useToast } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
+import { Box, Center, Heading, Spacer, Spinner, useDisclosure, useToast } from '@chakra-ui/react';
 
 import { getStorageData, setStorageData } from '@src/libs/storage';
 import { AllDevices, GetDeviceResult } from '@src/pages/background/fetcher';
@@ -13,7 +14,8 @@ import { DEVICE_INFO_LAST_GET_TIME, GET_DEVICES, MY_SWITC_BOT_DEVICES, MY_SWITC_
 
 let isFirst = true;
 
-const SwithcBotList: FC = () => {
+const SwithcBotList = () => {
+  const [loading, setLoading] = useState(true);
   const [devices, setDevices] = useState<AllDevices | undefined>();
   const toast = useToast();
 
@@ -24,15 +26,16 @@ const SwithcBotList: FC = () => {
     try {
       lastUpdateTime = (await getStorageData<string>(DEVICE_INFO_LAST_GET_TIME)) ?? lastUpdateTime;
     } catch (error) {
-      console.info('get fail lastUpdateTime');
+      console.error(error);
     }
     const diff = getDiffMinutesNow(lastUpdateTime);
 
-    if (diff >= -3) {
+    // 1分経過後に再度POPUPを開いたら再取得
+    if (diff >= -1) {
       const saveDevices = await getStorageData<AllDevices>(MY_SWITC_BOT_DEVICES);
-      // console.log({ devices });
       if (saveDevices) {
         setDevices(saveDevices);
+        setLoading(false);
         return;
       }
     }
@@ -42,29 +45,39 @@ const SwithcBotList: FC = () => {
   };
 
   const getCurrentDevices = async () => {
-    const token = await getStorageData<string>(MY_SWITC_BOT_TOKEN);
-    chrome.runtime.sendMessage({ type: GET_DEVICES, token }, (response: GetDeviceResult | undefined) => {
-      // console.log({ response });
-      if (response?.message === 'success') {
-        setStorageData(MY_SWITC_BOT_DEVICES, response.body);
-        setDevices(response.body);
-        // 前回取得時間をセット
-        setStorageData(DEVICE_INFO_LAST_GET_TIME, new Date().toISOString());
-      } else {
-        setStorageData(MY_SWITC_BOT_DEVICES, []);
-        setDevices(undefined);
-        toast({
-          title: 'Device Not Found',
-          status: 'warning',
-          position: 'bottom',
+    flushSync(() => {
+      try {
+        setLoading(true);
+        getStorageData<string>(MY_SWITC_BOT_TOKEN).then((token) => {
+          chrome.runtime.sendMessage({ type: GET_DEVICES, token }, (response: GetDeviceResult | undefined) => {
+            // console.log({ response });
+            if (response?.message === 'success') {
+              setStorageData(MY_SWITC_BOT_DEVICES, response.body);
+              setDevices(response.body);
+              // 前回取得時間をセット
+              setStorageData(DEVICE_INFO_LAST_GET_TIME, new Date().toISOString());
+            } else {
+              setStorageData(MY_SWITC_BOT_DEVICES, []);
+              setDevices(undefined);
+              toast({
+                title: 'Device Not Found',
+                status: 'warning',
+                position: 'bottom',
+              });
+            }
+          });
         });
+      } catch (e) {
+        console.warn({ e });
       }
+      setLoading(false);
     });
   };
 
   const setDeviceStatus = (deviceType: 'device' | 'remoteDevice', deviceId: string, status: number) => {
     // devicesが無い+online系Statusが無い場合、処理しない
     if (!devices) return;
+    // 100: online, 161,171: offline
     if (![100, 161, 171].some((e) => e === status)) return;
 
     const result = devices;
@@ -73,6 +86,8 @@ const SwithcBotList: FC = () => {
       const newDeviceList = devices.deviceList?.map((device) => {
         if (device.deviceId === deviceId) {
           device.online = status === 100 ? true : 161 === status ? false : device.online;
+          device.status = device.online ? 'online' : 'offline';
+          device.statusColor = device.online ? '#4ba01d' : '#c03a3a';
         }
         return device;
       });
@@ -84,6 +99,8 @@ const SwithcBotList: FC = () => {
       const newInfraredRemoteList = devices.infraredRemoteList?.map((device) => {
         if (device.deviceId === deviceId) {
           device.online = status === 100 ? true : 171 === status ? false : device.online;
+          device.status = device.online ? 'online' : 'offline';
+          device.statusColor = device.online ? '#4ba01d' : '#c03a3a';
         }
         return device;
       });
@@ -132,6 +149,12 @@ const SwithcBotList: FC = () => {
         <ReloadButton reload={getCurrentDevices} />
       </Center>
       <EditModal isOpen={isOpen} closeModal={onClose} reload={getCurrentDevices} />
+
+      {loading && (
+        <Center position={'absolute'} top={0} left={0} right={0} bottom={0}>
+          <Spinner size='lg' color='#E0393A' />
+        </Center>
+      )}
     </>
   );
 };

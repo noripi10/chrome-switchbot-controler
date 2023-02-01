@@ -61,3 +61,5 @@ export const EditModal = memo(
     );
   }
 );
+
+EditModal.displayName = 'EditButton';
