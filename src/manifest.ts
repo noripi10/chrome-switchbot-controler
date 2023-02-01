@@ -18,7 +18,7 @@ const manifest: ManifestType = {
     {
       matches: ['http://*/*', 'https://*/*', '<all_urls>'],
       js: ['src/pages/content/index.js'],
-      css: ['contentStyle.css'],
+      // css: ['contentStyle.css'],
     },
   ],
   web_accessible_resources: [

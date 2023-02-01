@@ -1,5 +1,5 @@
 try {
-  // console.log("content loaded");
+  // console.log('content loaded');
   injectContentViewScript();
 } catch (e) {
   console.error(e);

@@ -11,8 +11,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "tsc --noEmit && vite build",
-    "archive": "node archiver.js",
-    "lint": "eslint --fix ./src/**/*{.ts,.tsx}"
+    "archive": "node --loader ts-node/esm --inspect ./archive.ts"
   },
   "type": "module",
   "dependencies": {
@@ -27,6 +26,7 @@
     "react-icons": "^4.4.0"
   },
   "devDependencies": {
+    "@types/archiver": "^5.3.1",
     "@types/chrome": "^0.0.180",
     "@types/node": "^17.0.23",
     "@types/react": "^18.0.14",
